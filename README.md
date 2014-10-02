@@ -3,8 +3,8 @@
 [![][coverage img]][coverage]
 
 
-rabbit-executor-spring
-======================
+Watchrabbit - Executor - Spring
+===============================
 
 
 [coverage]:https://coveralls.io/r/watchrabbit/rabbit-executor-spring
