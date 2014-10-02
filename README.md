@@ -6,7 +6,7 @@
 Watchrabbit - Executor - Spring
 ===============================
 
-Executor - Spring is neat, compatible with the Spring convention wrapper of [Executor](https://github.com/watchrabbit/rabbit-executor) library. 
+Executor - Spring is convinient wrapper of [Executor](https://github.com/watchrabbit/rabbit-executor) library that follows the Spring convention. Easy to configure and use offers basic features  of [Executor](https://github.com/watchrabbit/rabbit-executor) in annotations based style.
 
 [coverage]:https://coveralls.io/r/watchrabbit/rabbit-executor-spring
 [coverage img]:https://img.shields.io/coveralls/watchrabbit/rabbit-executor-spring.png
