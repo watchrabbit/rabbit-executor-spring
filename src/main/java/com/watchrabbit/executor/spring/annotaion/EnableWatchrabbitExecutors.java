@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Import;
 
 /**
  * Enables support for handling components marked with Executor's
- * {@code @Executor} annotation. To be used on @{@link Configuration} classes as
+ * {@code @Executor} annotation. To be used on @{@code Configuration} classes as
  * follows:
  *
  * <pre class="code">
