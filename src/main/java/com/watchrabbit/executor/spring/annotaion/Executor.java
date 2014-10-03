@@ -22,15 +22,28 @@ import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Annotation indicating that a method (or all the methods on a class) can be
+ * wrapped by Rabbit Executor.
  *
  * @author Mariusz
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Executor {
 
+    /**
+     * Name of the circuit.
+     * <p>
+     * Used to determine remote system name.
+     */
     String circuitName();
 
+    /**
+     * Breaker retry timeout.
+     * <p>
+     * After breakerRetryTimeout elapses circuit breaker will automatically
+     * close connection.
+     */
     long breakerRetryTimeout() default 100;
 
     TimeUnit timeUnit() default TimeUnit.MILLISECONDS;

@@ -24,19 +24,15 @@ import org.springframework.stereotype.Service;
  * @author Mariusz
  */
 @Service
-public class AnnotatedService {
+@Executor(circuitName = "helloWorld")
+public class ClassAnnotatedService {
 
-    @Executor(circuitName = "helloWorld")
+    @Executor(circuitName = "helloWorld2")
+    public String helloWorld2(Callable<String> callable) throws Exception {
+        return callable.call();
+    }
+
     public String helloWorld(Callable<String> callable) throws Exception {
-        return callable.call();
-    }
-
-    @Executor(circuitName = "fastClose", breakerRetryTimeout = 1)
-    public String fastClose(Callable<String> callable) throws Exception {
-        return callable.call();
-    }
-
-    public String notMarked(Callable<String> callable) throws Exception {
         return callable.call();
     }
 }

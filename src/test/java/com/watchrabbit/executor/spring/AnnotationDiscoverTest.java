@@ -18,6 +18,7 @@ package com.watchrabbit.executor.spring;
 import com.watchrabbit.commons.sleep.Sleep;
 import com.watchrabbit.executor.exception.CircuitOpenException;
 import com.watchrabbit.executor.spring.config.AnnotatedService;
+import com.watchrabbit.executor.spring.config.ClassAnnotatedService;
 import com.watchrabbit.executor.spring.config.ContextTestBase;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +35,9 @@ public class AnnotationDiscoverTest extends ContextTestBase {
 
     @Autowired
     AnnotatedService annotatedService;
+
+    @Autowired
+    ClassAnnotatedService classAnnotatedService;
 
     @Test(expected = CircuitOpenException.class)
     public void shouldCallOnlyOnce() throws Exception {
@@ -67,5 +71,35 @@ public class AnnotationDiscoverTest extends ContextTestBase {
             return "ok";
         });
         assertThat(latch.getCount()).isEqualTo(0);
+    }
+
+    @Test
+    public void shouldThrowOnce() throws Exception {
+        try {
+            annotatedService.notMarked(() -> {
+                throw new Exception();
+            });
+            failBecauseExceptionWasNotThrown(Exception.class);
+        } catch (Exception ex) {
+        }
+        annotatedService.notMarked(() -> {
+            return "aa";
+        });
+
+    }
+
+    @Test(expected = CircuitOpenException.class)
+    public void shouldCallOnlyOnceOnClassAnnotated() throws Exception {
+        try {
+            classAnnotatedService.helloWorld(() -> {
+                throw new Exception();
+            });
+            failBecauseExceptionWasNotThrown(Exception.class);
+        } catch (Exception ex) {
+        }
+        classAnnotatedService.helloWorld(() -> {
+            throw new Exception();
+        });
+        failBecauseExceptionWasNotThrown(Exception.class);
     }
 }

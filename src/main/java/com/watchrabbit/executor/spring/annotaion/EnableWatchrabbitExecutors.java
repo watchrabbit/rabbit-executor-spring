@@ -24,6 +24,13 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 /**
+ * Enables support for handling components marked with Executor's
+ * {@code @Executor} annotation. To be used on @{@link Configuration} classes as
+ * follows:
+ *
+ * <pre class="code">
+ * &#064;Configuration &#064;EnableWatchrabbitExecutors public class AppConfig {
+ * }</pre>
  *
  * @author Mariusz
  */

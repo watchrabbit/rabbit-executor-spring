@@ -44,28 +44,42 @@ public class ExecutorAnnotationBeanPostProcessor implements BeanPostProcessor, O
     public Object postProcessAfterInitialization(final Object bean, String beanName) {
         Class<?> targetClass = AopUtils.getTargetClass(bean);
 
+        Executor classAnnotation = findClassAnnotation(targetClass);
+
         Map<Method, Executor> annotatedMethods = findAnnotatedMethods(targetClass);
 
         if (!annotatedMethods.isEmpty()) {
-            return createProxy(targetClass, annotatedMethods, bean).create();
+            return createProxy(targetClass, classAnnotation, annotatedMethods, bean).create();
         }
         return bean;
     }
 
-    private Enhancer createProxy(Class<?> targetClass, Map<Method, Executor> annotatedMethods, final Object bean) {
+    private Enhancer createProxy(Class<?> targetClass, Executor classAnnotation, Map<Method, Executor> annotatedMethods, final Object bean) {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(targetClass);
         enhancer.setCallback((InvocationHandler) (Object proxy, Method method, Object[] args) -> {
-            if (annotatedMethods.containsKey(method)) {
+            if (annotatedMethods.containsKey(method) || classAnnotation != null) {
                 Executor annotation = annotatedMethods.get(method);
-                return executor(annotation.circuitName())
-                        .withBreakerRetryTimeout(annotation.breakerRetryTimeout(), annotation.timeUnit())
-                        .invoke(() -> method.invoke(bean, args));
+                if (annotation != null) {
+                    return generateExecutor(annotation, method, bean, args);
+                } else {
+                    return generateExecutor(classAnnotation, method, bean, args);
+                }
             } else {
                 return method.invoke(bean, args);
             }
         });
         return enhancer;
+    }
+
+    private Object generateExecutor(Executor annotation, Method method, final Object bean, Object[] args) throws Exception {
+        return executor(annotation.circuitName())
+                .withBreakerRetryTimeout(annotation.breakerRetryTimeout(), annotation.timeUnit())
+                .invoke(() -> method.invoke(bean, args));
+    }
+
+    private Executor findClassAnnotation(Class<?> targetClass) throws IllegalArgumentException {
+        return AnnotationUtils.getAnnotation(targetClass, Executor.class);
     }
 
     private Map<Method, Executor> findAnnotatedMethods(Class<?> targetClass) throws IllegalArgumentException {
