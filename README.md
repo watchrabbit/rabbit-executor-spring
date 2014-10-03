@@ -10,7 +10,16 @@ Executor - Spring is convinient wrapper of [Executor](https://github.com/watchra
 
 Configuration
 -------------
+To enable Executor in spring application simply put `@EnableWatchrabbitExecutors` annotation on your configuration class.
 
+```java
+@Configuration
+@EnableWatchrabbitExecutors
+@ComponentScan(basePackages = {"com.watchrabbit.executor.spring"}, excludeFilters = @ComponentScan.Filter({Configuration.class}))
+public class ApplicationConfiguration {
+    ...
+}
+```
 
 Usage
 -----
