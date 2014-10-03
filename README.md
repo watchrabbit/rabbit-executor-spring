@@ -8,6 +8,18 @@ Watchrabbit - Executor - Spring
 
 Executor - Spring is convinient wrapper of [Executor](https://github.com/watchrabbit/rabbit-executor) library that follows the Spring convention. Easy to configure and use offers basic features  of [Executor](https://github.com/watchrabbit/rabbit-executor) in annotations based style.
 
+## Current release
+3/10/2014 rabbit-executor-spring **1.1.4** released! Should appear in maven central shortly.
+
+## Download and install
+```
+<dependency>
+  <groupId>com.watchrabbit</groupId>
+  <artifactId>rabbit-executor-spring</artifactId>
+  <version>1.1.4</version>
+</dependency>
+```
+
 Configuration
 -------------
 To enable Executor in spring application simply put `@EnableWatchrabbitExecutors` annotation on your configuration class.
