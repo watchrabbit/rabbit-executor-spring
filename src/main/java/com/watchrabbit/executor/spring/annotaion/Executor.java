@@ -46,5 +46,12 @@ public @interface Executor {
      */
     long breakerRetryTimeout() default 100;
 
+    /**
+     * Exceptions that will not open circuit when thrown.
+     *
+     * @return
+     */
+    Class<? extends Exception>[] excludedExceptions() default {};
+
     TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
 }
