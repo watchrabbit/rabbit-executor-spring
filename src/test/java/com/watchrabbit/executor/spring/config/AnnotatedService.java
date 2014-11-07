@@ -15,6 +15,7 @@
  */
 package com.watchrabbit.executor.spring.config;
 
+import com.watchrabbit.commons.exception.SystemException;
 import com.watchrabbit.executor.spring.annotaion.Executor;
 import java.util.concurrent.Callable;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,11 @@ public class AnnotatedService {
 
     @Executor(circuitName = "fastClose", breakerRetryTimeout = 1)
     public String fastClose(Callable<String> callable) throws Exception {
+        return callable.call();
+    }
+
+    @Executor(circuitName = "excludedSystemException", excludedExceptions = {SystemException.class})
+    public String excludedSystemException(Callable<String> callable) throws Exception {
         return callable.call();
     }
 

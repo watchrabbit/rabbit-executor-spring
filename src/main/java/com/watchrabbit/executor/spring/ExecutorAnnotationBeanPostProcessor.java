@@ -17,9 +17,14 @@ package com.watchrabbit.executor.spring;
 
 import static com.watchrabbit.executor.command.ExecutorCommand.executor;
 import com.watchrabbit.executor.spring.annotaion.Executor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.cglib.proxy.Enhancer;
@@ -34,6 +39,8 @@ import org.springframework.util.ReflectionUtils;
  * @author Mariusz
  */
 public class ExecutorAnnotationBeanPostProcessor implements BeanPostProcessor, Ordered {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutorAnnotationBeanPostProcessor.class);
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) {
@@ -75,21 +82,47 @@ public class ExecutorAnnotationBeanPostProcessor implements BeanPostProcessor, O
     private Object generateExecutor(Executor annotation, Method method, final Object bean, Object[] args) throws Exception {
         return executor(annotation.circuitName())
                 .withBreakerRetryTimeout(annotation.breakerRetryTimeout(), annotation.timeUnit())
-                .invoke(() -> method.invoke(bean, args));
+                .withExcludedExceptions(Arrays.asList(annotation.excludedExceptions()))
+                .invoke(
+                        prepareExtractingInvocationExCallable(
+                                () -> method.invoke(bean, args)
+                        )
+                );
     }
 
-    private Executor findClassAnnotation(Class<?> targetClass) throws IllegalArgumentException {
-        return AnnotationUtils.getAnnotation(targetClass, Executor.class);
+    private Callable<Object> prepareExtractingInvocationExCallable(Callable<Object> callable) {
+        return () -> {
+            try {
+                return callable.call();
+            } catch (InvocationTargetException ex) {
+                LOGGER.debug("Extracting orginally thrown exception");
+                if (ex.getTargetException() instanceof Exception) {
+                    throw (Exception) ex.getTargetException();
+                } else {
+                    throw ex;
+                }
+            }
+        };
+    }
+
+    private Executor
+            findClassAnnotation(Class<?> targetClass) throws IllegalArgumentException {
+        return AnnotationUtils.getAnnotation(targetClass, Executor.class
+        );
     }
 
     private Map<Method, Executor> findAnnotatedMethods(Class<?> targetClass) throws IllegalArgumentException {
         Map<Method, Executor> annotatedMethods = new HashMap<>();
-        ReflectionUtils.doWithMethods(targetClass, (Method method) -> {
-            Executor annotation = AnnotationUtils.getAnnotation(method, Executor.class);
-            if (annotation != null) {
-                annotatedMethods.put(method, annotation);
-            }
-        });
+        ReflectionUtils
+                .doWithMethods(targetClass, (Method method) -> {
+                    Executor annotation = AnnotationUtils.getAnnotation(method, Executor.class
+                    );
+                    if (annotation
+                    != null) {
+                        annotatedMethods.put(method, annotation);
+                    }
+                }
+                );
         return annotatedMethods;
     }
 

@@ -15,6 +15,7 @@
  */
 package com.watchrabbit.executor.spring;
 
+import com.watchrabbit.commons.exception.SystemException;
 import com.watchrabbit.commons.sleep.Sleep;
 import com.watchrabbit.executor.exception.CircuitOpenException;
 import com.watchrabbit.executor.spring.config.AnnotatedService;
@@ -102,4 +103,23 @@ public class AnnotationDiscoverTest extends ContextTestBase {
         });
         failBecauseExceptionWasNotThrown(Exception.class);
     }
+
+    @Test
+    public void shouldNotClose() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            annotatedService.excludedSystemException(() -> {
+                throw new SystemException();
+            });
+            failBecauseExceptionWasNotThrown(SystemException.class);
+        } catch (SystemException ex) {
+        }
+        annotatedService.excludedSystemException(() -> {
+            latch.countDown();
+            return null;
+        });
+
+        assertThat(latch.getCount()).isEqualTo(0);
+    }
+
 }
