@@ -49,6 +49,7 @@ public class ExecutorAnnotationBeanPostProcessor implements BeanPostProcessor, O
 
     @Override
     public Object postProcessAfterInitialization(final Object bean, String beanName) {
+        LOGGER.debug("Processing bean: {}", beanName);
         Class<?> targetClass = AopUtils.getTargetClass(bean);
 
         Executor classAnnotation = findClassAnnotation(targetClass);
@@ -56,6 +57,7 @@ public class ExecutorAnnotationBeanPostProcessor implements BeanPostProcessor, O
         Map<Method, Executor> annotatedMethods = findAnnotatedMethods(targetClass);
 
         if (!annotatedMethods.isEmpty()) {
+            LOGGER.debug("Bean: {} is annotated with @Executor, creating proxy", beanName);
             return createProxy(targetClass, classAnnotation, annotatedMethods, bean).create();
         }
         return bean;
