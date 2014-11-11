@@ -56,7 +56,7 @@ public class ExecutorAnnotationBeanPostProcessor implements BeanPostProcessor, O
 
         Map<Method, Executor> annotatedMethods = findAnnotatedMethods(targetClass);
 
-        if (!annotatedMethods.isEmpty()) {
+        if (classAnnotation != null || !annotatedMethods.isEmpty()) {
             LOGGER.debug("Bean: {} is annotated with @Executor, creating proxy", beanName);
             return createProxy(targetClass, classAnnotation, annotatedMethods, bean).create();
         }

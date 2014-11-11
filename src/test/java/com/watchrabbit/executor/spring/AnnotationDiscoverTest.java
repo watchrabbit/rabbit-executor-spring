@@ -21,6 +21,7 @@ import com.watchrabbit.executor.exception.CircuitOpenException;
 import com.watchrabbit.executor.spring.config.AnnotatedService;
 import com.watchrabbit.executor.spring.config.ClassAnnotatedService;
 import com.watchrabbit.executor.spring.config.ContextTestBase;
+import com.watchrabbit.executor.spring.config.OnlyClassAnnotatedService;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +40,24 @@ public class AnnotationDiscoverTest extends ContextTestBase {
 
     @Autowired
     ClassAnnotatedService classAnnotatedService;
+
+    @Autowired
+    OnlyClassAnnotatedService onlyClassAnnotatedService;
+
+    @Test(expected = CircuitOpenException.class)
+    public void shouldOpenCircuitOnClassAnnotation() throws Exception {
+        try {
+            onlyClassAnnotatedService.helloWorld(() -> {
+                throw new Exception();
+            });
+            failBecauseExceptionWasNotThrown(Exception.class);
+        } catch (Exception ex) {
+        }
+        onlyClassAnnotatedService.helloWorld(() -> {
+            throw new Exception();
+        });
+        failBecauseExceptionWasNotThrown(Exception.class);
+    }
 
     @Test(expected = CircuitOpenException.class)
     public void shouldCallOnlyOnce() throws Exception {
