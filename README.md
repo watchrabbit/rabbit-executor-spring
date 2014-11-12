@@ -49,7 +49,7 @@ public class BarService {
 }
 ```
 
-If circuit opens executor woudl throw `CircuitOpenException` instead of invoking function.
+If circuit opens executor would throw `CircuitOpenException` instead of invoking function.
 
 [coverage]:https://coveralls.io/r/watchrabbit/rabbit-executor-spring
 [coverage img]:https://img.shields.io/coveralls/watchrabbit/rabbit-executor-spring.png
