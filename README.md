@@ -8,6 +8,8 @@ Watchrabbit - Executor - Spring
 
 Executor - Spring is convinient wrapper of [Executor](https://github.com/watchrabbit/rabbit-executor) library that follows the Spring convention. Easy to configure and use offers basic features  of [Executor](https://github.com/watchrabbit/rabbit-executor) in annotations based style.
 
+## Powered by [watchrabbit.com]
+
 ## Current release
 11/11/2014 rabbit-executor-spring **1.1.7** released! Should appear in maven central shortly.
 
@@ -51,6 +53,7 @@ public class BarService {
 
 If circuit opens executor would throw `CircuitOpenException` instead of invoking function.
 
+[watchrabbit.com]:http://watchrabbit.com
 [coverage]:https://coveralls.io/r/watchrabbit/rabbit-executor-spring
 [coverage img]:https://img.shields.io/coveralls/watchrabbit/rabbit-executor-spring.png
 [travis]:https://travis-ci.org/watchrabbit/rabbit-executor-spring
